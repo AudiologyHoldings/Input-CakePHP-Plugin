@@ -1,0 +1,8 @@
+{
+  "name": "audiologyholdings/input",
+  "description": "Input access, sanitization, security layer to simplify CakeRequest access",
+  "type": "cakephp-plugin",
+  "require": {
+    "cakephp/cakephp": ">=2.5.5.4 <3.0.0"
+  }
+}
