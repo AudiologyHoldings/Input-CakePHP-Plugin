@@ -64,8 +64,8 @@ class InputComponent extends Component {
 	 */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
 		$settings = Hash::merge(
-			$settings,
-			['settings' => $this->defaults]
+			['settings' => $this->defaults],
+			$settings
 		);
 		parent::__construct($collection, $settings);
 
