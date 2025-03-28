@@ -122,7 +122,7 @@ class InputComponent extends Component {
             $data = InputClean::all($data, $this->settings);
         } catch (UnsafeInputException $e) {
             AppLog::error($e->getMessage());
-            $this->Controller->badFlash('Invalid input. ' . $e->getMessage());
+            $this->Controller->badFlash('Unsafe input detected');
             return [];
         }
 
