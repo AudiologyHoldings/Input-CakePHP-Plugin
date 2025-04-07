@@ -123,6 +123,10 @@ class InputComponent extends Component {
         } catch (UnsafeInputException $e) {
             AppLog::error($e->getMessage());
             $this->Controller->badFlash('Unsafe input detected');
+            if (isset($data['Verify']['hash']) && !empty($data['Verify']['hash'])) {
+                unset($data['Verify']['hash']);
+                return $data;
+            }
             return [];
         }
 
