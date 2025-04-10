@@ -337,7 +337,7 @@ class InputClean {
 	 *
 	 * @return string $emailRegex
 	 */
-	static function emailRegex() {
+	static function emailRegex(): string {
 		return '([a-zA-Z0-9\!\#\$\%\&\'i\*\+/=\?\^\_\`\{\|\}\~\-]+@[a-zA-Z0-9\!\#\$\%\&\'i\*\+/=\?\^\_\`\{\|\}\~\-]+\.[a-zA-Z0-9-.]{2,64})';
 	}
 
@@ -545,7 +545,8 @@ class InputClean {
 	 * @param array $patterns
 	 * @return string $string
 	 */
-	static function tokenize($string, $patterns = []) {
+	static function tokenize($string, $patterns = []): string
+    {
 		if (empty($patterns)) {
 			return $string;
 		}
@@ -558,7 +559,7 @@ class InputClean {
 			if (empty($pattern)) {
 				continue;
 			}
-			if (!preg_match_all($pattern, $string, $matches)) {
+			if (!preg_match_all("/".$pattern."/", $string, $matches)) {
 				continue;
 			}
 			// make tokens
@@ -621,7 +622,7 @@ class InputClean {
 			return false;
 		}
 		// is this a valid pattern?
-		if (@preg_match($pattern, null) !== false) {
+		if (@preg_match("/".$pattern."/", null) !== false) {
 			return $pattern;
 		}
 		// is this a "configured" tokenizePattern?
