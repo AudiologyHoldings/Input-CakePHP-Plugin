@@ -55,6 +55,13 @@ class InputComponent extends Component {
 	 */
 	public $params;
 
+    /**
+     * Holds the reference to Controller
+     *
+     * @var Controller
+     */
+    public $Controller;
+
 
 	/**
 	 * Constructor.
@@ -69,9 +76,9 @@ class InputComponent extends Component {
 		);
 		parent::__construct($collection, $settings);
 
-		$Controller = $collection->getController();
-		$this->request = &$Controller->request;
-		$this->response = &$Controller->response;
+		$this->Controller = $collection->getController();
+		$this->request = &$this->Controller->request;
+		$this->response = &$this->Controller->response;
 	}
 
 	/**
@@ -111,7 +118,17 @@ class InputComponent extends Component {
 
 		// clean with In's data cleanup (from this plugin)
 		App::uses('InputClean', 'Input.Lib');
-		$data = InputClean::all($data, $this->settings);
+        try {
+            $data = InputClean::all($data, $this->settings);
+        } catch (UnsafeInputException $e) {
+            AppLog::error($e->getMessage());
+            $this->Controller->badFlash('Unsafe input detected');
+            if (isset($data['Verify']['hash']) && !empty($data['Verify']['hash'])) {
+                unset($data['Verify']['hash']);
+                return $data;
+            }
+            return [];
+        }
 
 		// clean with a custom CleanData Lib (from the app) if it exists
 		App::import('Lib', 'CleanData');
