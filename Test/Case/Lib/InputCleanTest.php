@@ -44,7 +44,7 @@ class InputCleanTest extends AppTestCase {
 				'url' => 'http://example.com/funky?something=1#anchor',
 			]
 		];
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::all($v, $config),
 			$v
 		);
@@ -79,7 +79,7 @@ class InputCleanTest extends AppTestCase {
 				'anything' => 'abc <a href="#html-allowed">:)</a>',
 			]
 		];
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::all($v, $config),
 			$expect
 		);
@@ -200,13 +200,13 @@ class InputCleanTest extends AppTestCase {
 
 	public function testCleanField() {
 		$config = InputClean::configDefault();
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::cleanField('foo<strong>bar</strong> ' .
 			'here', 'basic', $config),
 			'foobar here'
 		);
 		// FILTER_SANITIZE_STRING (+ strip_tags)
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::cleanField('foo<strong>bar</strong> ' .
 			'here', 'Modle.basic', $config),
 			'foobar here'
@@ -214,7 +214,7 @@ class InputCleanTest extends AppTestCase {
 		// FILTER_SANITIZE_URL
 		// Remove all characters except letters, digits and
 		// $-_.+!*'(),{}|\\^~[]`<>#%";/?:@&=.
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::cleanField('http://exam'.
 			"\n\r\t <>" . // << should be stripped
 			'ple.com/path?query=1#anchor', 'Modle.url', $config),
@@ -223,7 +223,7 @@ class InputCleanTest extends AppTestCase {
 		// FILTER_SANITIZE_EMAIL
 		// Remove all characters except letters, digits and
 		// !#$%&'*+-/=?^_`{|}~@.[].`
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::cleanField('valid+target@exam'.
 			"\n\r\t \"()<>" . // << should be stripped
 			'ple.com?subject=funky', 'Modle.email', $config),
@@ -244,7 +244,7 @@ class InputCleanTest extends AppTestCase {
 			htmlentities('foobar <a href="#">escaped</a>')
 		];
 		foreach ($unchanged as $v) {
-			$this->assertEqual(
+			$this->assertEquals(
 				InputClean::clean($v, 'blacklist', $config),
 				$v
 			);
@@ -262,33 +262,33 @@ class InputCleanTest extends AppTestCase {
 			htmlentities('foobar <a href="#">escaped</a>')
 		];
 		foreach ($unchanged as $v) {
-			$this->assertEqual(
+			$this->assertEquals(
 				InputClean::clean($v, 'string', $config),
 				$v
 			);
 		}
 
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::clean("foobar < isolated LT not allowed (because of strip_tags)", 'string', $config),
 			'foobar '
 		);
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::clean('foobar <a href="#" class="css" style="no xss">link</a> foobar', 'string', $config),
 			'foobar link foobar'
 		);
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::clean('foobar <> no empty tag', 'string', $config),
 			'foobar  no empty tag'
 		);
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::clean('foobar <!--e--> no comment tag', 'string', $config),
 			'foobar  no comment tag'
 		);
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::clean('foobar <a href="#" no broken tag', 'string', $config),
 			'foobar '
 		);
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::clean('foobar <!--e-- no broken comment tag', 'string', $config),
 			'foobar '
 		);
@@ -319,26 +319,26 @@ class InputCleanTest extends AppTestCase {
 			'foobar <!--e-- no broken comment tag',
 		];
 		foreach ($unchanged as $v) {
-			$this->assertEqual(
+			$this->assertEquals(
 				InputClean::clean($v, 'html', $config),
 				$v
 			);
 		}
 
 		// changing things, because we are still calling strip_scripts() for HTML
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::clean('foobar <!--e--> no comment tag', 'html', $config),
 			'foobar  no comment tag'
 		);
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::clean('foobar <script src="blah"></script> no script tag', 'html', $config),
 			'foobar  no script tag'
 		);
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::clean('foobar <script>blah</script> no script tag', 'html', $config),
 			'foobar  no script tag'
 		);
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::clean('foobar <iframe src="blah">blah</iframe> no iframe tag', 'html', $config),
 			'foobar  no iframe tag'
 		);
@@ -351,9 +351,9 @@ class InputCleanTest extends AppTestCase {
 			// verify XSS Exception
 			try {
 				$r = InputClean::clean($v, 'html', $config);
-				$this->assertEqual($r, '', 'Should have thrown an UnsafeInputException');
+				$this->assertEquals($r, '', 'Should have thrown an UnsafeInputException');
 			} catch (UnsafeInputException $e) {
-				$this->assertEqual(
+				$this->assertEquals(
 					$e->getMessage(),
 					sprintf('Unsafe Input Detected [hash: %s]',
 						md5($v)
@@ -363,9 +363,9 @@ class InputCleanTest extends AppTestCase {
 			// no filter...  XSS Exception
 			try {
 				$r = InputClean::clean($v, ['filter' => false, 'xss' => true]);
-				$this->assertEqual($r, '', 'Should have thrown an UnsafeInputException');
+				$this->assertEquals($r, '', 'Should have thrown an UnsafeInputException');
 			} catch (UnsafeInputException $e) {
-				$this->assertEqual(
+				$this->assertEquals(
 					$e->getMessage(),
 					sprintf('Unsafe Input Detected [hash: %s]',
 						md5($v)
@@ -374,7 +374,7 @@ class InputCleanTest extends AppTestCase {
 			}
 
 			// no filter...  XSS doesn't run
-			$this->assertEqual(
+			$this->assertEquals(
 				InputClean::clean($v, ['filter' => false, 'xss' => false]),
 				$v
 			);
@@ -457,14 +457,14 @@ class InputCleanTest extends AppTestCase {
 		$config = InputClean::configDefault();
 		$config['sanitizationKeyMap']['string']['tokenize'] = ['emailInArrows'];
 		// not found, normal
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::clean('foobar <strong>html</strong>', 'string', $config),
 			'foobar html'
 		);
 		// email in arrows found, and allowed "<$email>"
 		//   this only makes it past strip_tags() because
 		//   it's first tokenized, and then later, detokenized
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::clean('foobar <email@example.com> <strong>html</strong>', 'string', $config),
 			'foobar <email@example.com> html'
 		);
@@ -492,7 +492,7 @@ class InputCleanTest extends AppTestCase {
 			"non-em\nail@example.com",
 		];
 		foreach ($badEmails as $badEmail) {
-			$this->assertEqual(
+			$this->assertEquals(
 				InputClean::clean("foobar <$badEmail> <strong>html</strong>", 'string', $config),
 				'foobar  html'
 			);
@@ -504,7 +504,7 @@ class InputCleanTest extends AppTestCase {
 	public function testTokenizeInCleanEmailInArrowsDisable() {
 		$config = InputClean::configDefault();
 		$config['sanitizationKeyMap']['string']['tokenize'] = false;
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::clean('foobar <email@example.com> <strong>html</strong>', 'string', $config),
 			'foobar  html'
 		);
@@ -537,30 +537,30 @@ class InputCleanTest extends AppTestCase {
 	}
 
 	public function testTokenize() {
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::tokenize('foobar', []),
 			'foobar'
 		);
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::tokenize('foobar', null),
 			'foobar'
 		);
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::$tokens,
 			[]
 		);
 		$result = InputClean::tokenize('foobar', ['#bar#']);
-		$this->assertEqual(
+		$this->assertEquals(
 			count(InputClean::$tokens),
 			1
 		);
 		$token = key(InputClean::$tokens);
 		$orig = current(InputClean::$tokens);
-		$this->assertEqual(
+		$this->assertEquals(
 			$result,
 			"foo{$token}"
 		);
-		$this->assertEqual(
+		$this->assertEquals(
 			$orig,
 			'bar'
 		);
@@ -568,11 +568,11 @@ class InputCleanTest extends AppTestCase {
 
 	public function testDetokenize() {
 		InputClean::tokenizeReset();
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::$tokens,
 			[]
 		);
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::detokenize('foobar'),
 			'foobar'
 		);
@@ -582,12 +582,12 @@ class InputCleanTest extends AppTestCase {
 			// replaces multiple instances
 			'o' => 'x',
 		];
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::detokenize('foobarB'),
 			'fxxXarB'
 		);
 		// auto-detokenize
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::$tokens,
 			[]
 		);
@@ -596,11 +596,11 @@ class InputCleanTest extends AppTestCase {
 	public function testTokenizeReset() {
 		InputClean::$tokens['abc'] = 'abc-foobar';
 		InputClean::$tokens['xyz'] = 'xyz-foobar';
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::tokenizeReset(),
 			null
 		);
-		$this->assertEqual(
+		$this->assertEquals(
 			InputClean::$tokens,
 			[]
 		);
@@ -636,11 +636,11 @@ EOT;
 
 		// "skipping" is "same"
 		$result = InputClean::clean($html, 'skip', $config);
-		$this->assertEqual($result, $html);
+		$this->assertEquals($result, $html);
 
 		// "anything" is "same" (but did check for XSS)
 		$result = InputClean::clean($html, 'anything', $config);
-		$this->assertEqual($result, $html);
+		$this->assertEquals($result, $html);
 
 		// "html" is "changed" (but did clean scripts and check for XSS)
 		$result = InputClean::clean($html, 'html', $config);
@@ -660,7 +660,7 @@ EOT;
 		];
 		$result = InputClean::all($data);
 		$this->assertNotEqual($result, $data);
-		$this->assertEqual(
+		$this->assertEquals(
 			$result['html'],
 			InputClean::clean($html, 'string', $config)
 		);
